@@ -1,7 +1,7 @@
 <%@ page import="model.MisAcciones" %>
 <%@ page import="java.util.List" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script src="https://kit.fontawesome.com/40e27e6718.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
@@ -125,7 +125,8 @@
         }
 
         .letraPequenia {
-            font-size: 12px;=
+            font-size: 12px;
+        =
         }
 
         .tuerquita {
@@ -159,7 +160,8 @@
                 <th>
                     Fecha de compra
                     <a href="#" onclick="ordenarTabla(1); return false;">
-                        <iconify-icon icon="icon-park-solid:sort" width="25" style="text-decoration: none; color: #FFF"></iconify-icon>
+                        <iconify-icon icon="icon-park-solid:sort" width="25"
+                                      style="text-decoration: none; color: #FFF"></iconify-icon>
                     </a>
                 </th>
                 <th>Precio de compra por accion</th>
@@ -173,22 +175,25 @@
             <form action="MisAccionesController?ruta=añadirAcción" method="POST">
                 <tr>
                     <td>
-                        <input type="text" id="nombreAccion" name="nombreAccion" placeholder="Nombre de la accion" required>
+                        <input type="text" id="nombreAccion" name="nombreAccion" placeholder="Nombre de la accion"
+                               required>
                     </td>
                     <td>
                         <input type="date" id="fechaCompra" name="fechaCompra" placeholder="Fecha de compra" required>
                     </td>
                     <td>
-                        <input type="text" id="precioCompra" name="precioCompra" placeholder="Precio de compra por accion" required>
+                        <input type="text" id="precioCompra" name="precioCompra"
+                               placeholder="Precio de compra por accion" required>
                     </td>
                     <td>
-                        <input type="text" id="cantidadAccion" name="cantidadAccion" placeholder="Cantidad de acciones" required>
+                        <input type="text" id="cantidadAccion" name="cantidadAccion" placeholder="Cantidad de acciones"
+                               required>
                     </td>
                     <td>
                         <p class="letraPequenia">Este valor se calcula luego de insertar los datos </p>
                     </td>
                     <td>
-                        <input type="text" id="cambio" name="cambio" placeholder="Cambio" required>
+                        <p class="letraPequenia">Este valor se calcula luego de insertar los datos </p>
                     </td>
                     <td>
                         <p class="letraPequenia">Este valor se calcula luego de insertar los datos </p>
@@ -262,14 +267,29 @@
         const tbody = table.querySelector('tbody');
         const rows = [].slice.call(tbody.querySelectorAll('tr'));
 
-        rows.slice(1).sort(function(a, b) {
+        rows.slice(1).sort(function (a, b) {
             const aValue = a.cells[columna].textContent.trim().toLowerCase();
             const bValue = b.cells[columna].textContent.trim().toLowerCase();
             return bValue.localeCompare(aValue);
-        }).forEach(function(row) {
+        }).forEach(function (row) {
             tbody.appendChild(row);
         });
     }
 </script>
+
+<%
+    boolean alerta;
+    if (request.getAttribute("alerta") != null) {
+        alerta = (boolean) request.getAttribute("alerta");
+
+        if (alerta) {
+%>
+<script>
+    alert("No existe la acción");
+</script>
+<%
+        }
+    }
+%>
 </body>
 </html>

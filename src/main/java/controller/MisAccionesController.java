@@ -6,9 +6,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
+import java.math.BigDecimal;
 import java.util.List;
 
+import clases.Unmarshalling;
 import model.MisAcciones;
 
 @WebServlet("/MisAccionesController")
@@ -43,22 +44,28 @@ public class MisAccionesController extends HttpServlet {
 
     private void añadirAcción(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nombreAccion = request.getParameter("nombreAccion");
-        String fechaCompra = request.getParameter("fechaCompra");
-        Double precio = Double.valueOf(request.getParameter("precioCompra"));
-        Integer cantidad = Integer.valueOf(request.getParameter("cantidadAccion"));
-        Double costoTotal = precio * cantidad;
-        Double cambio = Double.valueOf(request.getParameter("cambio"));
-        boolean cambioNegativo = cambio < 0;
+        Double precioActual = Unmarshalling.unmarshalling(nombreAccion);
 
-        if (cambioNegativo) {
-            Double perdida = costoTotal - (costoTotal * (-cambio));
-            MisAcciones.guardarAcción(nombreAccion, fechaCompra, precio, cantidad, costoTotal, cambio, perdida);
+        if (precioActual != 0.0) {
+            String fechaCompra = request.getParameter("fechaCompra");
+            Double precio = Double.valueOf(request.getParameter("precioCompra"));
+            Integer cantidad = Integer.valueOf(request.getParameter("cantidadAccion"));
+            Double costoTotal = precio * cantidad;
+
+            Double gananciaOPerdida = precioActual * cantidad;
+
+            BigDecimal cambio = new BigDecimal(1.0 - (costoTotal / gananciaOPerdida));
+            cambio = cambio.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+            MisAcciones.guardarAcción(nombreAccion, fechaCompra, precio, cantidad, costoTotal, cambio.doubleValue(), gananciaOPerdida);
+
+            response.sendRedirect("MisAccionesController?ruta=mostrarAcciones");
         } else {
-            Double ganancia = costoTotal + (costoTotal * cambio);
-            MisAcciones.guardarAcción(nombreAccion, fechaCompra, precio, cantidad, costoTotal, cambio, ganancia);
+            boolean alerta = true;
+            request.setAttribute("alerta", alerta);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
 
-        response.sendRedirect("MisAccionesController?ruta=mostrarAcciones");
     }
 
     private void mostrarAcciones(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -67,5 +74,4 @@ public class MisAccionesController extends HttpServlet {
         request.setAttribute("misAccionesList", misAccionesList);
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
 }
