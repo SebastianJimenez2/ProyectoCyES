@@ -53,8 +53,9 @@ public class MisAccionesController extends HttpServlet {
             Double costoTotal = precio * cantidad;
 
             Double gananciaOPerdida = precioActual * cantidad;
+            Double cambioCálculo = (100.0 * (gananciaOPerdida /costoTotal)) - 100.0
 
-            BigDecimal cambio = new BigDecimal(1.0 - (costoTotal / gananciaOPerdida));
+            BigDecimal cambio = new BigDecimal(cambioCálculo);
             cambio = cambio.setScale(2, BigDecimal.ROUND_HALF_UP);
 
             MisAcciones.guardarAcción(nombreAccion, fechaCompra, precio, cantidad, costoTotal, cambio.doubleValue(), gananciaOPerdida);
